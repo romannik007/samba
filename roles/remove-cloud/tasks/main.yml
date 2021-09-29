@@ -1,0 +1,12 @@
+- name: recofigure cloud
+  debconf:
+    name: cloud-init
+    
+- name: remove cloud
+  apt:
+    name: cloud-init
+    state: absent
+    autoremove: true
+
+- name: remove config cloud
+  command: sudo rm -rf /etc/cloud/ && sudo rm -rf /var/lib/cloud/

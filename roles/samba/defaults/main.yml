@@ -1,0 +1,25 @@
+---
+ubuntu_samba_packages:
+  - samba
+  - samba-common
+  - python-glade2
+  - system-config-samba
+workgroup: MRSK-C
+realm: MRSK-C.LOCAL
+public_share_name: public
+public_share_path: /mnt/share/public
+install_share_name: install
+install_share_path: /mnt/share/install
+scan_share_path: /mnt/share/scan
+#owner: "@DOMAIN\\Администраторы домена"
+owner: '{{ workgroup }}\44neya_admins'
+samba_group_name: smbusers
+samba_users:
+  - name: 'scan'
+    smbpasswd: '$$password**'
+
+## net join
+
+adauth_username: "krylov.rn@mrsk-c"
+adauth_password: "12345-qwer"
+adauth_server_ou: 'Servers/КостромаЭнерго'

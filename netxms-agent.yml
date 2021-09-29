@@ -1,0 +1,6 @@
+- hosts: glpi
+  become: yes
+  roles:
+    - netxms-agent
+    - unattended-upgrades
+    

@@ -1,0 +1,16 @@
+- name: copy vsftpd configs
+  copy:
+    src: files/
+    dest: /etc/
+    force: yes
+    backup: yes
+
+- name: restart vsftpd
+  service:
+    name: vsftpd
+    state: restarted
+
+- name: enable vsftpd
+  systemd:
+    name: vsftpd
+    enabled: yes

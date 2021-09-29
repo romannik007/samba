@@ -1,0 +1,11 @@
+- name: upgrade all packages to the latest version 
+  apt: 
+    name: "*"
+    state: latest
+    update_cache: yes
+    autoremove: yes
+    autoclean: yes
+    force_apt_get: yes
+  environment:
+    http_proxy: http://10.44.8.38:3142
+

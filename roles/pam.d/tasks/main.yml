@@ -1,0 +1,19 @@
+    
+- name: Replace a 1000 for change passwd scan {{ ansible_hostname }}
+  lineinfile:
+    path: /etc/pam.d/common-password
+    regexp: '^\s*password\s*\[success=3\s*default\s*=\s*ignore]\s*pam_krb5.so\s*minimum_uid.*'
+    line: 'password [success=3 default=ignore] pam_krb5.so minimum_uid=10000'
+    backup: yes
+    state: present
+    backrefs: yes
+
+- name: smbd restart
+  service:
+    name: smbd
+    state: restarted
+    
+- name: vsftpd restart
+  service:
+    name: vsftpd
+    state: restarted

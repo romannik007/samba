@@ -1,0 +1,34 @@
+- name: remove ntp
+  apt:
+    name: ['ntp' , 'ntpstat' , 'ntpdate']
+    update_cache: yes
+    state: absent
+  environment:
+    http_proxy: http://10.44.8.38:33333
+
+- name: TimeZone
+  timezone:
+    name: Europe/Moscow
+
+- name: echo 'NTP=10.44.0.18' >> /etc/systemd/timesyncd.conf
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/timesyncd.conf
+    regexp: '^NTP='
+    line: NTP=10.44.0.18  
+
+- name: timedatectl set-local-rtc 1 --adjust-system-clock
+  command: timedatectl set-local-rtc 0 --adjust-system-clock
+
+- name: timedatectl set-ntp true
+  command: timedatectl set-ntp true
+
+- name: systemctl restart systemd-timesyncd.service
+  command: systemctl restart systemd-timesyncd.service
+
+- name: systemctl enable --now systemd-timesyncd.service
+  command: systemctl enable --now systemd-timesyncd.service
+
+    
+#  become: yes
+#  become_user: root
+  

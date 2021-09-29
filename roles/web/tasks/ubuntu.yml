@@ -1,0 +1,7 @@
+- name: install web server
+  apt:
+    name: "apache2"
+    state: present
+    update_cache: true
+  become: yes
+  become_user: root

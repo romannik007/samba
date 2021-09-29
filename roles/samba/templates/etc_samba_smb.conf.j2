@@ -1,0 +1,124 @@
+#======================= Global Settings ===================================== 
+#{{ ansible_managed }}
+[global]
+  workgroup = {{ workgroup }}
+  realm = {{ realm }}
+  server string = Samba Server %v
+  netbios name = {{ ansible_hostname }}
+  security = ADS
+  encrypt passwords = true
+#  passdb backend = tbsam
+  obey pam restrictions = yes
+  unix password sync = yes
+  dns proxy = no
+  socket options = TCP_NODELAY
+  domain master = no
+  local master = no
+  preferred master = no
+  os level = 0
+  domain logons = no
+# Отключить расшаривание принтеров. Если вы конечно и вправду не хотите их расшаривать.
+  # Для полного отключения нужно указывать все 4 строки, приведённых ниже 
+  load printers = no
+  show add printer wizard = no
+  printcap name = /dev/null
+  disable spoolss = yes
+# Сделать скрытыми при просмотре с Windows файлы со следующими именами
+  hide files = /$RECYCLE.BIN/desktop.ini/lost+found/Thumbs.db/
+  # Использовать для шар с публичным доступом следующего UNIX пользователя в качестве Guest
+  guest account = nobody
+  # Воспринимать как guest незарегистрированных пользователей
+  map to guest = Bad User
+
+  # Опции сопоставления доменных пользователей и виртуальных пользователей в системе через Winbind.
+   # Диапазоны идентификаторов для виртуальных пользователей и групп.
+   idmap config * : range = 10000-40000
+   idmap config * : backend = tdb 
+   # Эти опции не стоит выключать.
+   winbind enum groups = yes
+   winbind enum users = yes
+   
+   # Использовать домен по умолчанию для имён пользователей. Без этой опции имена пользователей и групп
+   # будут использоваться с доменом, т.е. вместо username - DOMAIN\username.
+   # Возможно именно это вам и нужно, однако обычно проще этот параметр включить. 
+   winbind use default domain = yes
+   # Если вы хотите разрещить использовать командную строку для пользователей домена, то
+   # добавьте следующую строку, иначе в качестве shell'а будет вызываться /bin/false
+   template shell = /bin/bash
+   # Для автоматического обновления билета Kerberos модулем pam_winbind.so нужно добавить строчку
+   winbind refresh tickets = yes
+   winbind offline logon = yes
+   winbind cache time = 300
+   password server = kos-srv-dc5.MRSK-C.LOCAL
+  ## Настройки, использующие расширенные атрибуты файловой системы 
+    
+    log file = /var/log/samba/log.%m
+    max log size = 1000
+    syslog = 0
+ 
+  # Обрабатывать наследования прав с помощью расширенных атрибутов ФС
+  map acl inherit         = yes
+  vfs objects = acl_xattr
+  # Использовать расширенные атрибуты ФС для хранения атрибутов DOS
+  store dos attributes    = yes
+  # Отключить маппинг DOS атрибутов на UNIX права, включённый по умолчанию
+  # Согласно man smb.conf при использовании расширенных атрибутов эти опции обязаны быть отключены 
+  map archive             = no
+  map system              = no
+  map hidden              = no 
+  map readonly            = no
+  usershare allow guests = yes
+
+[profiles]
+   comment = Users profiles
+   path = /var/data/profiles
+    admin users = "MRSK-C\44neya_admins"
+    read only = no
+    locking = no
+    guest ok = no
+    browseable = no
+   create mask = 0600
+   directory mask = 0700
+
+ 
+#============================ Share Definitions ==============================
+ 
+#### Public Share ####
+[{{ public_share_name }}]
+  comment = Общая папка
+  path = {{ public_share_path }}
+  browsable =yes
+  writable = yes
+  read only = no
+  locking = no
+  admin users = {{ owner }}
+  create mask = 0600
+  directory mask = 0700
+
+#### Install Share ####
+[{{ install_share_name }}]
+  comment = Install
+  path = {{ install_share_path }}
+# valid users = @{{ samba_group_name }}
+  writable = yes
+  browsable = yes
+  read only = no
+  locking = no
+  admin users = {{ owner }}
+  create mask = 0600
+  directory mask = 0700
+
+[scan]
+    comment  = Сканирование
+    path = {{ scan_share_path }}
+    admin users = {{ owner }}
+    guest ok = no
+    browseable = yes
+    writable = yes
+#    valid users = MRSK-C\krylov.rn
+    create mask = 0600
+    directory mask   = 0700
+    read only = no
+    owner = scan
+    locking = no
+

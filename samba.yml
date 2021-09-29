@@ -1,0 +1,15 @@
+- hosts: kos-srv-antrop
+  become: yes
+  become_user: root
+  roles:
+    - hostname
+#    - remove-cloud
+#    - time
+#    - upgrade
+#    - samba-soft
+#    - vsftpd
+#    - pam.d
+#     - samba
+#    - netxms-agent
+#    - fusion-agent
+    

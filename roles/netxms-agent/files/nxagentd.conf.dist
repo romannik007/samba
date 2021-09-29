@@ -1,0 +1,6 @@
+# Log File
+LogFile=/var/log/nxagentd
+
+# IP white list, can contain multiple records separated by comma.
+# CIDR notation supported for subnets.
+MasterServers=10.44.8.14

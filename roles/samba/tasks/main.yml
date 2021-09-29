@@ -1,0 +1,128 @@
+---
+#- name: Install the Samba and additional packages
+#  apt:
+#    name: "{{ item }}"
+#    state: installed
+#    update_cache: yes
+#  with_items: "{{ ubuntu_samba_packages }}"
+     
+- name: Copy the Customize smb.conf file
+  template: 
+    src: etc_samba_smb.conf.j2
+    dest: /etc/samba/smb.conf
+    backup: yes
+#  notify:
+#    - Restart Samba
+    
+- name: Copy the Customize resolve.conf file
+  template: 
+    src: run_systemd_resolve.conf.j2
+    dest: /run/systemd/resolve.conf
+    backup: yes
+
+- name: Copy the Customize krb5.conf file
+  template: 
+    src: etc_krb5.conf.j2
+    dest: /etc/krb5.conf
+    backup: yes
+
+- name: Copy the Customize nsswitch.conf file
+  template: 
+    src: etc_nsswitch.conf.j2
+    dest: /etc/nsswitch.conf
+    backup: yes
+
+- name: Copy the Customize ntp.conf file
+  template: 
+    src: etc_ntp.conf.j2
+    dest: /etc/ntp.conf
+    backup: yes
+
+- name: Copy the Customize resolved.conf file
+  template: 
+    src: etc_systemd_resolved.conf.j2
+    dest: /etc/systemd/resolved.conf
+    backup: yes
+  notify:
+    - Restart Samba
+    - Restart systemd-resolved
+    - Restart networking
+#    - Restart ntpd
+
+
+
+
+- name: Join AD with Samba to generate the keytab
+  command: /usr/bin/net ads join createcomputer={{ adauth_server_ou }} -U "{{ adauth_username }}"%"{{ adauth_password }}" -S kos-srv-dc5
+#  args:
+#    creates: /etc/krb5.keytab
+
+
+- name: Create Samba users restricted group
+  group:
+    name: "{{ samba_group_name }}"
+    state: present
+
+- name: Add the User(s) to Samba group
+  user:
+    name: "{{ item.name }}" 
+    groups: "{{ samba_group_name }}" 
+    append: yes
+    force: yes
+    update_password: always
+  with_items: "{{ samba_users }}"
+
+- name: Create Samba Password for User(s)
+  shell: "(echo {{ item.smbpasswd }}; echo {{ item.smbpasswd }}) | passwd {{ item.name }}"
+  with_items: "{{ samba_users }}"
+
+- name: "Check that {{ public_share_path }} exist"
+  stat:
+    path: "{{ public_share_path }}"
+  register: public_dir_exists
+
+- name: "Create {{ public_share_path }} directory"
+  file:
+    state: directory
+    path: "{{ public_share_path }}"
+#    owner: '{{ owner }}'
+    group: '{{ owner }}'
+    mode: ug+rwx
+    recurse: yes
+  when: public_dir_exists.stat.exists == False
+
+- name: "Check that {{ install_share_path }} exist"
+  stat:
+    path: "{{ install_share_path }}"
+  register: install_dir_exists
+
+- name: "Create {{ install_share_path }} directory"
+  file:
+    state: directory
+    path: "{{ install_share_path }}"
+#    owner: '{{ owner }}'
+    group: '{{ owner }}'
+    mode: ug+rwx
+    recurse: yes
+  when: install_dir_exists.stat.exists == False
+
+
+- name: "Check that {{ scan_share_path }} exist"
+  stat:
+    path: "{{ scan_share_path }}"
+  register: install_dir_exists
+
+- name: "Create {{ scan_share_path }} directory"
+  file:
+    state: directory
+    path: "{{ scan_share_path }}"
+#    owner: '{{ owner }}'
+    group: '{{ owner }}'
+    mode: 766
+    recurse: yes
+  when: install_dir_exists.stat.exists == False
+
+- name: chmod scan
+  file:
+    path: "{{ scan_share_path }}"
+    mode: '1777'

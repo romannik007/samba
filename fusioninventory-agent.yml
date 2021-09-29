@@ -1,0 +1,6 @@
+- hosts: kos-srv-parfen
+  become: yes
+  become_user: root
+  roles:
+    - fusion-agent
+

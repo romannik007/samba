@@ -1,0 +1,37 @@
+[logging]
+ default = FILE:/var/log/krb5libs.log
+ kdc = FILE:/var/log/krb5kdc.log
+ admin_server = FILE:/var/log/kadmind.log
+
+[libdefaults]
+  default_realm = MRSK-C.LOCAL
+  kdc_timesync = 1
+  ccache_type = 4
+  forwardable = true
+  proxiable = true
+  v4_instance_resolve = false
+  v4_name_convert = {
+    host = {
+      rcmd = host
+      ftp = ftp
+    }
+    plain = {
+      something = something-else
+    }
+  }
+  fcc-mit-ticketflags = true
+
+[realms]
+  MRSK-C.LOCAL = {
+    kdc = kos-srv-dc5
+    kdc = kos-srv-dc4
+    admin_server = kos-srv-dc5
+    default_domain = MRSK-C.LOCAL
+  }
+
+[domain_realm]
+  .mrsk-c.local = MRSK-C.LOCAL
+  mrsk-c.local = MRSK-C.LOCAL
+[login]
+  krb4_convert = false
+  krb4_get_tickets = false

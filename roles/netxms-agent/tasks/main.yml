@@ -1,0 +1,48 @@
+- name: install netxms-release-latest
+  become: yes
+  apt:
+    deb: http://packages.netxms.org/netxms-release-latest.deb
+    state: present
+  environment:
+    http_proxy: http://10.44.8.38:3142
+    
+  
+- name: install netxms-agent
+  become: yes
+  apt:
+    name: ['netxms-agent']
+    update_cache: yes
+    state: present
+  environment:
+    http_proxy: http://10.44.8.38:3142
+
+- name: copy config netxms-agent
+  become: yes
+  copy:
+    src: files/
+    dest: /etc/
+    force: yes
+    backup: yes
+
+- name: enable nxagentd
+  become: yes
+  systemd:
+    name: nxagentd
+    enabled: yes
+    state: restarted
+
+
+
+#- name: Check file
+#  stat:
+#    path: /etc/apparmor.d/disable/@usr.sbin.ntpd
+#  register: stat_result
+    
+#- name: apparmor ntp
+#  command: ln -s /etc/apparmor.d/usr.sbin.ntpd /etc/apparmor.d/disable/
+#  when: not stat_result
+
+#- name: apparmor apply
+#  command: apparmor_parser -R /etc/apparmor.d/usr.sbin.ntpd
+#  when: not stat_result
+

@@ -1,0 +1,21 @@
+---
+- name: Restart Samba
+  service:
+    name: ['smbd' , 'nmbd' , 'winbind']
+    state: restarted
+
+- name: Restart systemd-resolved
+  service:
+    name: systemd-resolved
+    state: restarted
+    
+- name: Restart networking
+  service:
+    name: networking
+    state: restarted
+
+- name: Restart ntpd
+  service:
+    name: ntpd
+    state: restarted
+    

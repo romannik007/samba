@@ -1,0 +1,16 @@
+- name: Set a hostname {{ ansible_hostname }}
+  hostname:
+    name: "kos-srv-antrop"
+    
+- name: Replace a localhost entry with our own {{ ansible_hostname }}
+  lineinfile:
+    path: /etc/hosts
+    regexp: '^127\.0\.1\.1'
+    line: "{{ lookup('dig', ansible_host) }} {{ ansible_hostname }}.mrsk-c.local {{ ansible_hostname }}"
+    
+  
+#    owner: root
+#    group: root
+#    mode: '0644'
+ 
+

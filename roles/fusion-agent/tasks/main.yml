@@ -1,0 +1,60 @@
+- name: install fusion
+  become: yes
+  apt: 
+    name: ['fusioninventory-agent' , 'fusioninventory-agent-task-deploy' , 'fusioninventory-agent-task-network', 'fusioninventory-agent-task-collect']
+    update_cache: yes
+    state: present
+  environment: 
+    http_proxy: http://10.44.8.38:3142
+    
+#- name: install fusion invetory agent
+#  become: yes
+#  apt:
+#    deb: https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/fusioninventory-agent_2.5.2-1_all.deb
+#  environment:
+#    http_proxy: http://10.44.8.38:3142
+    
+#- name: install fusion invetory agent
+#  become: yes
+#  apt:
+#    deb: https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/fusioninventory-agent-task-collect_2.5.2-1_all.deb
+#  environment:
+#    http_proxy: http://10.44.8.38:3142
+    
+#- name: install fusion invetory agent
+#  become: yes
+#  apt:
+#    deb: https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/fusioninventory-agent-task-network_2.5.2-1_all.deb
+#  environment:
+#    http_proxy: http://10.44.8.38:3142
+    
+#- name: install fusion invetory agent
+#  become: yes
+#  apt:
+#    deb: https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/fusioninventory-agent-task-deploy_2.5.2-1_all.deb
+#  environment:
+#    http_proxy: http://10.44.8.38:3142
+    
+#- name: install fusion invetory agent
+#  become: yes
+#  apt:
+#    deb: https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.5.2/fusioninventory-agent-task-esx_2.5.2-1_all.deb
+#  environment:
+#    http_proxy: http://10.44.8.38:3142
+    
+- name: copy config fusion agent
+  become: yes
+  copy:
+    src: files/agent.cfg
+    dest: /etc/fusioninventory/
+    force: yes
+    backup: yes
+    
+- name: enable fusion agent
+  become: yes
+  systemd:
+    name: fusioninventory-agent
+    enabled: yes
+    state: restarted
+
+

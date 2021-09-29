@@ -1,0 +1,3 @@
+---
+- name: apply apparmor ntpd
+  command: apparmor_parser -R /etc/apparmor.d/usr.sbin.ntpd

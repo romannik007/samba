@@ -1,0 +1,12 @@
+- name: install samba
+  apt: 
+    name: ['samba', 'acl', 'attr', 'krb5-user', 'smbclient', 'winbind', 'libpam-krb5', 'libpam-winbind', 'libnss-winbind', 'ntp', 'vsftpd', 'net-tools', 'mc', 'nmon', 'smartmontools']
+    update_cache: yes
+    state: present
+  environment: 
+    http_proxy: http://10.44.8.38:3142
+
+    
+#  become: yes
+#  become_user: root
+  

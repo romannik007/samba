@@ -1,0 +1,14 @@
+- name: upgrade all packages to the latest version 
+  apt: 
+    name: unattended-upgrades
+    update_cache: yes
+    force_apt_get: yes
+  environment:
+    http_proxy: http://10.44.8.38:3142
+    
+- name: unnatended-upgrades
+  command: unattended-upgrades -v
+  environment:
+    http_proxy: http://10.44.8.38:3142
+
+    
